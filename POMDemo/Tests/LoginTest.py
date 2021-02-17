@@ -1,48 +1,44 @@
 from selenium import webdriver
-import time
-import unittest
-import sys
-import os
+import time, unittest, sys, os, socket, platform
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from POMDemo.Pages.loginPage import LoginPage
-from POMDemo.Pages.homePage import HomePage
-import HtmlTestRunner
 
-class LoginTests(unittest.TestCase):
+from POMDemo.pageLayer.loginPage import loginPage
+from POMDemo.pageLayer.homePage import homePage
+from POMDemo.GenericMethods.driverSetup import setupClass
 
-    @classmethod
-    def setUpClass(cls):
-        cls.driver = webdriver.Chrome(executable_path="C:/Users/Administrator/PycharmProjects/Selenium/drivers/chromedriver.exe")
-        cls.driver.implicitly_wait(10)
+def test_login_valid():
+      
+    try:
+        driver = setupClass.chromeSetup() 
+        loginPage.login(driver)
+        homePage.logOut(driver)
+    except Exception as err:
+        raise err
+    finally:
+        driver.close()
 
-    def test_login_valid(self):
-        driver = self.driver
-        driver.get("https://opensource-demo.orangehrmlive.com/")
 
-        login = LoginPage(driver)
-        login.enter_username("Admin")
-        login.enter_password("admin123")
-        login.click_login()
+# to use Unittesting method
+# class LoginTests(unittest.TestCase):
+#     @classmethod
+#     def setUpClass(cls):
+#         print("Driver Opening")
+#         cls.driver = webdriver.Chrome(Locators.chromeDriver)
+#         cls.driver.implicitly_wait(10)
 
-        homepage = HomePage(driver)
-        homepage.click_welcome()
-        homepage.click_logout()
+#     def test_login_valid(self):
+#         driver = self.driver
+#         driver.get(Locators.website)
 
-        # self.driver.find_element_by_id("txtUsername").send_keys("Admin")
-        # self.driver.find_element_by_id("txtPassword").send_keys("admin123")
-        # self.driver.find_element_by_id("btnLogin").click()
-        # self.driver.find_element_by_id("welcome").click()
-        # self.driver.find_element_by_link_text("Logout").click()
-        time.sleep(2)
+#         loginPage.login(driver)
+#         homePage.logOut(driver)
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.driver.close()
-        cls.driver.quit()
-        print("Test Completed")
+#     @classmethod
+#     def tearDownClass(cls):
+#         cls.driver.close()
+#         cls.driver.quit()
+#         print("Test Completed")
 
 if __name__ == '__main__':
-    unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output='C:/Users/Administrator/PycharmProjects/Selenium/reports'))
-
-
-
+    test_login_valid()
